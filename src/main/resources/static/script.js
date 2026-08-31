@@ -498,6 +498,7 @@ function openService(i) {
       '"></label>';
   });
   byId("formFields").innerHTML = html;
+  attachAutocompleteToInputs();
   text("enterTitle", ui[currentLanguage].enter);
   text("resultBtn", ui[currentLanguage].show);
   byId("resultBox").innerHTML =
@@ -544,5 +545,123 @@ byId("serviceForm").addEventListener("submit", async function (e) {
     button.textContent = ui[currentLanguage].show;
   }
 });
+
+var locationDatabase = [
+  "Sompeta, Srikakulam, Andhra Pradesh",
+  "Tekkali, Srikakulam, Andhra Pradesh",
+  "Palasa, Srikakulam, Andhra Pradesh",
+  "Narasannapeta, Srikakulam, Andhra Pradesh",
+  "Srikakulam, Andhra Pradesh",
+  "Surampalem, Kakinada, Andhra Pradesh",
+  "Peddapuram, Kakinada, Andhra Pradesh",
+  "Kakinada, Andhra Pradesh",
+  "Rajamahendravaram, East Godavari, Andhra Pradesh",
+  "Amalapuram, BR Ambedkar Konaseema, Andhra Pradesh",
+  "Eluru, West Godavari, Andhra Pradesh",
+  "Bhimavaram, West Godavari, Andhra Pradesh",
+  "Tadepalligudem, West Godavari, Andhra Pradesh",
+  "Vijayawada, NTR District, Andhra Pradesh",
+  "Guntur, Andhra Pradesh",
+  "Tenali, Guntur, Andhra Pradesh",
+  "Narasaraopet, Palnadu, Andhra Pradesh",
+  "Ongole, Prakasam, Andhra Pradesh",
+  "Kandukur, Prakasam, Andhra Pradesh",
+  "Markapur, Prakasam, Andhra Pradesh",
+  "Nellore, SPSR Nellore, Andhra Pradesh",
+  "Gudur, SPSR Nellore, Andhra Pradesh",
+  "Kurnool, Andhra Pradesh",
+  "Nandyal, Andhra Pradesh",
+  "Adoni, Kurnool, Andhra Pradesh",
+  "Anantapur, Andhra Pradesh",
+  "Dharmavaram, Anantapur, Andhra Pradesh",
+  "Kadapa, YSR District, Andhra Pradesh",
+  "Proddatur, YSR District, Andhra Pradesh",
+  "Tirupati, Andhra Pradesh",
+  "Chittoor, Andhra Pradesh",
+  "Madanapalle, Annamayya, Andhra Pradesh",
+  "Visakhapatnam, Andhra Pradesh",
+  "Anakapalle, Andhra Pradesh",
+  "Vizianagaram, Andhra Pradesh",
+  "Hyderabad, Telangana",
+  "Secunderabad, Telangana",
+  "Warangal, Telangana",
+  "Hanamkonda, Telangana",
+  "Karimnagar, Telangana",
+  "Khammam, Telangana",
+  "Nalgonda, Telangana",
+  "Nizamabad, Telangana",
+  "Mahabubnagar, Telangana",
+  "Siddipet, Telangana",
+  "Medak, Telangana",
+  "Sangareddy, Telangana"
+];
+
+function setupLocationAutocomplete(inputElement) {
+  if (!inputElement || inputElement.dataset.autocompleteAttached) return;
+  inputElement.dataset.autocompleteAttached = "true";
+
+  var wrapper = document.createElement("div");
+  wrapper.className = "autocompleteContainer";
+  inputElement.parentNode.insertBefore(wrapper, inputElement);
+  wrapper.appendChild(inputElement);
+
+  var list = document.createElement("ul");
+  list.className = "suggestionsList hidden";
+  wrapper.appendChild(list);
+
+  inputElement.addEventListener("input", function () {
+    var query = inputElement.value.trim().toLowerCase();
+    if (query.length < 2) {
+      list.classList.add("hidden");
+      list.innerHTML = "";
+      return;
+    }
+
+    var matches = locationDatabase.filter(function (place) {
+      var p = place.toLowerCase();
+      return p.includes(query) || query.split(/\s+/).every(function(q){ return p.includes(q); });
+    });
+
+    if (matches.length === 0) {
+      list.classList.add("hidden");
+      list.innerHTML = "";
+      return;
+    }
+
+    var html = "";
+    matches.slice(0, 6).forEach(function (place) {
+      html += "<li>📍 " + escapeAttribute(place) + "</li>";
+    });
+    list.innerHTML = html;
+    list.classList.remove("hidden");
+
+    Array.from(list.children).forEach(function (li) {
+      li.addEventListener("click", function (e) {
+        e.stopPropagation();
+        inputElement.value = li.textContent.replace(/^📍\s*/, "").trim();
+        list.classList.add("hidden");
+        list.innerHTML = "";
+      });
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!wrapper.contains(e.target)) {
+      list.classList.add("hidden");
+    }
+  });
+}
+
+function attachAutocompleteToInputs() {
+  document.querySelectorAll("input").forEach(function (input) {
+    var text = ((input.placeholder || "") + " " + (input.parentNode ? input.parentNode.textContent || "" : "")).toLowerCase();
+    if (text.includes("district") || text.includes("location") || text.includes("village") || text.includes("market") || text.includes("place") || text.includes("pickup") || text.includes("farm")) {
+      setupLocationAutocomplete(input);
+    }
+  });
+}
+
 changeLanguage("en");
 restoreSession();
+attachAutocompleteToInputs();
+

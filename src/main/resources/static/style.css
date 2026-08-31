@@ -463,3 +463,41 @@ header select {
     font-size: 17px;
   }
 }
+
+.autocompleteContainer {
+  position: relative;
+  width: 100%;
+}
+.suggestionsList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #ffffff;
+  border: 1.5px solid var(--green);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(9, 47, 29, 0.2);
+  margin-top: 5px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px 0;
+  list-style: none;
+}
+.suggestionsList li {
+  padding: 11px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+.suggestionsList li:hover,
+.suggestionsList li.active {
+  background: #edf7ec;
+  color: var(--green);
+  font-weight: bold;
+}
+
