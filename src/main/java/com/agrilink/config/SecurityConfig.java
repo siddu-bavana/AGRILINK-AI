@@ -19,8 +19,10 @@ public class SecurityConfig {
         var s=new UrlBasedCorsConfigurationSource(); s.registerCorsConfiguration("/**",c); return s;
     }
     @Bean SecurityFilterChain security(HttpSecurity h, JwtFilter jwt) throws Exception {
-        return h.csrf(x->x.disable()).cors(x->{}).sessionManagement(x->x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(x->x.requestMatchers("/","/*.html","/*.css","/*.js","/robots.txt","/sitemap.xml","/api/auth/**","/api/public/**","/h2-console/**").permitAll().anyRequest().authenticated())
+        return h.csrf(x->x.disable()).cors(c->c.configurationSource(corsConfigurationSource()))
+            .sessionManagement(x->x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(x->x.requestMatchers("/","/*.html","/*.css","/*.js","/*.ico","/robots.txt","/sitemap.xml","/error","/api/auth/**","/api/public/**","/h2-console/**").permitAll().anyRequest().authenticated())
             .headers(x->x.frameOptions(f->f.sameOrigin())).addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class).build();
     }
+
 }
