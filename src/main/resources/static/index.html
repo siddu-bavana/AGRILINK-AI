@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="AgriLink AI helps farmers find buyers, share transport, calculate profit and make better harvest decisions." />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#176b3a" />
+    <meta property="og:title" content="AgriLink AI" />
+    <meta property="og:description" content="Smart farming, fair prices and verified buyer matching for every farmer." />
+    <meta property="og:type" content="website" />
+    <title>AgriLink AI</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="login" class="screen login">
+      <div class="brand">
+        🌱 <b>AgriLink <i>AI</i></b>
+      </div>
+      <section class="intro">
+        <small>FOR EVERY FARMER</small>
+        <h1 id="tagline">Smart farming. Fair prices. Better lives.</h1>
+        <p id="introText">
+          Every farming decision, made simpler in your language.
+        </p>
+        <div class="crops">🌾 🌽 🍅 🌶️ 🥬</div>
+      </section>
+      <section class="panel">
+        <h2 id="welcome">Welcome to AgriLink AI</h2>
+        <p id="safeText">Sign in using your phone number and password</p>
+        <div class="authTabs" role="tablist">
+          <button id="signInTab" class="active" type="button" onclick="showAuthMode('signin')">Sign In</button>
+          <button id="signUpTab" type="button" onclick="showAuthMode('signup')">Sign Up</button>
+        </div>
+        <form id="signInForm" class="authForm">
+          <label><span id="mobileLabel">Phone number</span>
+            <input id="loginMobile" inputmode="numeric" maxlength="10" autocomplete="username" placeholder="9876543210" required />
+          </label>
+          <label>Password
+            <input id="loginPassword" type="password" minlength="6" autocomplete="current-password" placeholder="Enter your password" required />
+          </label>
+          <button id="otpBtn" class="primary" type="submit">Sign In</button>
+        </form>
+        <form id="signUpForm" class="authForm hidden">
+          <label>Full name
+            <input id="signupName" maxlength="100" autocomplete="name" placeholder="Ramesh Kumar" required />
+          </label>
+          <label>Phone number
+            <input id="signupMobile" inputmode="numeric" maxlength="10" autocomplete="username" placeholder="9876543210" required />
+          </label>
+          <label>District
+            <input id="signupDistrict" maxlength="100" placeholder="Ongole" />
+          </label>
+          <label>Password
+            <input id="signupPassword" type="password" minlength="6" maxlength="72" autocomplete="new-password" placeholder="Minimum 6 characters" required />
+          </label>
+          <label>Confirm password
+            <input id="signupConfirmPassword" type="password" minlength="6" maxlength="72" autocomplete="new-password" placeholder="Enter password again" required />
+          </label>
+          <button id="guestBtn" class="primary" type="submit">Create Account</button>
+        </form>
+        <small id="loginMessage" aria-live="polite">New user? Select Sign Up to create an account.</small>
+        <div class="languages">
+          <button onclick="changeLanguage('en')">English</button
+          ><button onclick="changeLanguage('te')">తెలుగు</button
+          ><button onclick="changeLanguage('hi')">हिन्दी</button>
+        </div>
+      </section>
+    </main>
+    <main id="setup" class="screen setup hidden">
+      <section class="panel">
+        <div class="pin">📍</div>
+        <h2 id="locationTitle">Location & Language</h2>
+        <p id="chooseText">Choose your language. You can change it later.</p>
+        <div class="detected">
+          📍
+          <span
+            ><small id="detectedLabel">DETECTED LOCATION</small
+            ><b id="placeText">Location not detected yet</b></span
+          ><span id="locationStatusIcon">…</span>
+        </div>
+        <div class="suggest">
+          🌐
+          <span id="suggestText"
+            >We detected Telangana. Continue in Telugu?</span
+          >
+        </div>
+        <button id="yesBtn" class="primary" onclick="continueTelugu()">
+          Yes, continue in Telugu</button
+        ><button id="detectLocationBtn" class="secondary" type="button" onclick="requestDeviceLocation()">
+          📍 Detect My Location
+        </button>
+        <small id="locationPrivacy" class="privacyNote">Your browser will ask permission. Your coordinates and detected place are saved to your account.</small>
+        <button
+          id="otherBtn"
+          class="secondary"
+          onclick="showScreen('dashboard')"
+        >
+          Choose another language
+        </button>
+        <div class="languages">
+          <button onclick="changeLanguage('en')">English</button
+          ><button onclick="changeLanguage('te')">తెలుగు</button
+          ><button onclick="changeLanguage('hi')">हिन्दी</button>
+        </div>
+      </section>
+    </main>
+    <main id="dashboard" class="screen hidden">
+      <header>
+        <div class="brand">
+          🌱 <b>AgriLink <i>AI</i></b>
+        </div>
+        <div class="headerActions">
+          <select id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="te">తెలుగు</option>
+            <option value="hi">हिन्दी</option>
+          </select>
+          <button class="logoutBtn" type="button" onclick="logout()">Sign Out</button>
+        </div>
+      </header>
+      <section class="hero">
+        <div>
+          <small>☀️ 29°C</small>
+          <h1 id="hello">Namaste, Ramesh!</h1>
+          <p id="question">What would you like to do today?</p>
+          <button id="dashboardLocation" class="locationChip" type="button" onclick="requestDeviceLocation()">📍 Detect location</button>
+        </div>
+        <span>🌾🚜</span>
+      </section>
+      <section class="content">
+        <h2 id="servicesTitle">Everything your farm needs</h2>
+        <p id="tapText">Tap any card to get started</p>
+        <div id="serviceGrid" class="grid"></div>
+        <div class="tip">
+          💡
+          <span
+            ><b id="tipTitle">Today's farming tip</b>
+            <p id="tipText">
+              Light rain is expected tomorrow. Complete spraying before 3 PM.
+            </p></span
+          >
+        </div>
+      </section>
+    </main>
+    <main id="service" class="screen hidden">
+      <header>
+        <div class="brand">
+          🌱 <b>AgriLink <i>AI</i></b>
+        </div>
+      </header>
+      <section class="content">
+        <button id="backBtn" class="back" onclick="showScreen('dashboard')">
+          ← Back to services
+        </button>
+        <div class="serviceHeading">
+          <span id="serviceIcon"></span>
+          <div>
+            <h1 id="serviceName"></h1>
+            <p id="serviceDescription"></p>
+          </div>
+        </div>
+        <div class="workspace">
+          <form id="serviceForm">
+            <h2 id="enterTitle">Enter your details</h2>
+            <div id="formFields"></div>
+            <button id="resultBtn" class="primary">Show Result</button>
+          </form>
+          <section id="resultBox" class="result">
+            <div class="empty">
+              🌱
+              <h3 id="emptyText">Your result will appear here</h3>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

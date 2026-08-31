@@ -1,0 +1,9 @@
+package com.agrilink;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class AgriLinkApplication {
+    public static void main(String[] args) { SpringApplication.run(AgriLinkApplication.class, args); }
+}
