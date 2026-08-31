@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class H2ConsoleConfig {
+    static {
+        System.setProperty("h2.webAllowOthers", "true");
+    }
+
     @Bean
     public ServletRegistrationBean<WebServlet> h2ConsoleServlet() {
         ServletRegistrationBean<WebServlet> registration = new ServletRegistrationBean<>(new WebServlet(), "/h2-console/*");
@@ -14,3 +18,4 @@ public class H2ConsoleConfig {
         return registration;
     }
 }
+

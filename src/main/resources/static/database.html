@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriLink AI — Database Explorer</title>
+  <style>
+    :root { --green: #176b3a; --bg: #f7faf4; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; background: var(--bg); color: #173329; }
+    h1 { font-family: Georgia, serif; color: var(--green); margin-bottom: 8px; }
+    .subtitle { color: #555; margin-bottom: 24px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tab { padding: 10px 18px; background: #e2ece0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #333; }
+    .tab.active { background: var(--green); color: #fff; }
+    .sqlBox { background: #fff; border: 1.5px solid #c5d5c5; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    textarea { width: 100%; height: 70px; border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 14px; box-sizing: border-box; }
+    button.runBtn { background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 10px 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .tableContainer { overflow-x: auto; background: #fff; border-radius: 12px; border: 1px solid #dcd; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    th { background: #edf7ec; color: var(--green); padding: 12px 14px; border-bottom: 2px solid #c8e0c5; }
+    td { padding: 12px 14px; border-bottom: 1px solid #eee; word-break: break-word; }
+    tr:nth-child(even) { background: #fcfdfe; }
+    .badge { background: #edf7ec; color: var(--green); padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .error { color: #b3261e; background: #fff0ee; padding: 12px; border-radius: 8px; font-weight: bold; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🌱 AgriLink AI Database Explorer</h1>
+  <p class="subtitle">View and inspect live database records across all tables.</p>
+
+  <div class="tabs" id="tableTabs">
+    <button class="tab active" onclick="loadTable('users')">👥 Users</button>
+    <button class="tab" onclick="loadTable('analysis_history')">📊 Analysis History</button>
+    <button class="tab" onclick="loadTable('buyers')">🤝 Verified Buyers</button>
+    <button class="tab" onclick="loadTable('crop_listings')">🌾 Crop Listings</button>
+    <button class="tab" onclick="loadTable('transport_requests')">🚚 Transport Requests</button>
+    <button class="tab" onclick="loadTable('rescue_requests')">🆘 Rescue Requests</button>
+  </div>
+
+  <div class="sqlBox">
+    <h3>Run Custom SQL Query (SELECT only)</h3>
+    <textarea id="sqlInput" placeholder="SELECT * FROM users ORDER BY created_at DESC;"></textarea>
+    <button class="runBtn" onclick="runSql()">Execute SQL</button>
+  </div>
+
+  <div id="statusMsg"></div>
+  <div class="tableContainer">
+    <table id="dataTable">
+      <thead><tr id="tableHead"><th>Loading...</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    var currentTable = 'users';
+    function setActiveTab(tableName) {
+      document.querySelectorAll('.tab').forEach(function(t) {
+        t.classList.toggle('active', t.getAttribute('onclick').includes(tableName));
+      });
+    }
+
+    async function loadTable(tableName) {
+      currentTable = tableName;
+      setActiveTab(tableName);
+      document.getElementById('statusMsg').innerHTML = '<span class="badge">Loading ' + tableName + '...</span>';
+      try {
+        var res = await fetch('/api/public/db/query?table=' + tableName);
+        var data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        renderTable(data.rows);
+        document.getElementById('statusMsg').innerHTML = '<span class="badge">' + data.count + ' rows found in ' + tableName + '</span>';
+      } catch (err) {
+        document.getElementById('statusMsg').innerHTML = '<div class="error">' + err.message + '</div>';
+      }
+    }
+
+    async function runSql() {
+      var sql = document.getElementById('sqlInput').value.trim();
+      if (!sql) return;
+      document.getElementById('statusMsg').innerHTML = '<span class="badge">Executing SQL...</span>';
+      try {
+        var res = await fetch('/api/public/db/sql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sql: sql })
+        });
+        var data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        renderTable(data.rows);
+        document.getElementById('statusMsg').innerHTML = '<span class="badge">SQL Query returned ' + data.count + ' rows</span>';
+      } catch (err) {
+        document.getElementById('statusMsg').innerHTML = '<div class="error">' + err.message + '</div>';
+      }
+    }
+
+    function renderTable(rows) {
+      var head = document.getElementById('tableHead');
+      var body = document.getElementById('tableBody');
+      head.innerHTML = '';
+      body.innerHTML = '';
+      if (!rows || rows.length === 0) {
+        head.innerHTML = '<th>No Data</th>';
+        body.innerHTML = '<tr><td style="padding:20px;">No records found in this table.</td></tr>';
+        return;
+      }
+      var keys = Object.keys(rows[0]);
+      var headHtml = '';
+      keys.forEach(function(k) { headHtml += '<th>' + k + '</th>'; });
+      head.innerHTML = headHtml;
+
+      var bodyHtml = '';
+      rows.forEach(function(row) {
+        bodyHtml += '<tr>';
+        keys.forEach(function(k) {
+          var val = row[k];
+          if (typeof val === 'object' && val !== null) val = JSON.stringify(val);
+          bodyHtml += '<td>' + (val !== null && val !== undefined ? escapeHtml(String(val)) : '<i>null</i>') + '</td>';
+        });
+        bodyHtml += '</tr>';
+      });
+      body.innerHTML = bodyHtml;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    loadTable('users');
+  </script>
+</body>
+</html>
