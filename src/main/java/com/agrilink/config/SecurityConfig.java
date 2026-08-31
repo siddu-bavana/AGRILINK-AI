@@ -45,7 +45,9 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/public/**")).permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(f -> f.sameOrigin()))
