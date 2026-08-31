@@ -7,8 +7,11 @@ import java.util.*;
 @RestController @RequestMapping("/api")
 public class MarketplaceController {
     private final BuyerRepository buyers; private final CropListingRepository crops; private final TransportRequestRepository transport; private final RescueRequestRepository rescue;
-    MarketplaceController(BuyerRepository b,CropListingRepository c,TransportRequestRepository t,RescueRequestRepository r){buyers=b;crops=c;transport=t;rescue=r;}
-    private Long uid(Authentication a){return (Long)a.getDetails();}
+    private Long uid(Authentication a){
+        if (a == null || a.getDetails() == null) throw new SecurityException("Session expired. Please Sign Out and Sign In again.");
+        return (Long)a.getDetails();
+    }
+
     @GetMapping("/public/buyers") List<Buyer> allBuyers(){return buyers.findAll();}
     @GetMapping("/buyers/{id}") Buyer buyer(@PathVariable Long id){return buyers.findById(id).orElseThrow();}
     @PostMapping("/buyers") ResponseEntity<Buyer> addBuyer(@RequestBody Buyer b){return ResponseEntity.status(201).body(buyers.save(b));}

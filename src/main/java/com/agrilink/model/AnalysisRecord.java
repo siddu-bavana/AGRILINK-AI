@@ -8,7 +8,8 @@ public class AnalysisRecord {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY) public Long id;
     public Long userId;
     @Column(nullable=false) public String serviceType;
-    @Lob public String requestJson;
-    @Lob public String resultJson;
+    @Column(columnDefinition="TEXT") public String requestJson;
+    @Column(columnDefinition="TEXT") public String resultJson;
     public LocalDateTime createdAt = LocalDateTime.now();
 }
+
