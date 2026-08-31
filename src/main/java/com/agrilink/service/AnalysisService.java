@@ -284,6 +284,8 @@ public class AnalysisService {
         );
     }
 
+    private record ScoredBuyer(String company, int score) {}
+
     // 7: Automatic Buyer Matching
     private List<String> buyerMatching(List<String> v) {
         String crop = v(v, 0).isEmpty() ? "Tomato" : v(v, 0);
@@ -291,8 +293,8 @@ public class AnalysisService {
         String grade = v(v, 2).isEmpty() ? "A" : v(v, 2);
         String place = v(v, 3).isEmpty() ? "District" : v(v, 3);
 
-        record ScoredBuyer(String company, int score) {}
         var allBuyers = buyers.findAll();
+
 
         List<ScoredBuyer> matches = new ArrayList<>();
         for (Buyer b : allBuyers) {
