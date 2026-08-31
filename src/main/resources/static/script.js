@@ -214,7 +214,7 @@ var ui = {
     enter: "Enter your details",
     show: "Show Result",
     empty: "Your result will appear here",
-    complete: "Sample analysis complete",
+    complete: "Analysis complete",
     yourResult: "Your result",
   },
   te: {
@@ -249,7 +249,7 @@ var ui = {
     enter: "మీ వివరాలను నమోదు చేయండి",
     show: "ఫలితం చూపించు",
     empty: "మీ ఫలితం ఇక్కడ కనిపిస్తుంది",
-    complete: "నమూనా విశ్లేషణ పూర్తయింది",
+    complete: "విశ్లేషణ పూర్తయింది",
     yourResult: "మీ ఫలితం",
   },
   hi: {
@@ -283,7 +283,7 @@ var ui = {
     enter: "अपनी जानकारी भरें",
     show: "परिणाम दिखाएँ",
     empty: "आपका परिणाम यहाँ दिखाई देगा",
-    complete: "नमूना विश्लेषण पूरा हुआ",
+    complete: "विश्लेषण पूरा हुआ",
     yourResult: "आपका परिणाम",
   },
 };
@@ -485,7 +485,7 @@ function openService(i) {
   if (i === 3) defaults = ["", "", "", "", place];
   if (i === 4) defaults = ["", "", place, ""];
   if (i === 5) defaults = ["", "", "", place];
-  if (i === 7) defaults = ["Tomato", "2000", "A", place || "Ongole", "2"];
+  if (i === 7) defaults = ["", "", "", place, ""];
   fields[currentLanguage][i].forEach(function (label, index) {
     var value = defaults[index] || "";
     html +=
